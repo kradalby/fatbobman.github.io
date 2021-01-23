@@ -378,6 +378,7 @@ article p code, article li code, .discover .content code {
 
 footer {
     color: #8a8a8a;
+    text-align:center;
 }
 
 @media (prefers-color-scheme: dark) {

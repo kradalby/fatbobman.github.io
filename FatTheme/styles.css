@@ -208,6 +208,10 @@ a {
     color: inherit;
 }
 
+.item-list a{
+   text-decoration: none;
+}
+
 a.browse-all {
     color: #e6241e;
     font-weight: bold;
@@ -216,7 +220,7 @@ a.browse-all {
 }
 
 a.browse-all:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 
@@ -252,6 +256,10 @@ article ol ul,article ol ol,article ul ol,article ul ul{
 article ul,article ol {
     margin-top: 10px;
     margin-left: 10px;
+}
+
+article a{
+    text-decoration: underline;
 }
 
 .description {
@@ -379,6 +387,11 @@ article p code, article li code, .discover .content code {
 footer {
     color: #8a8a8a;
     text-align:center;
+}
+
+footer p{
+    margin: 5px;
+    font-size: 10px;
 }
 
 @media (prefers-color-scheme: dark) {

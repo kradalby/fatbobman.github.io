@@ -17,12 +17,13 @@ body {
     color: #000;
     /*font-family: Helvetica, Arial;*/
     text-align: center;
-    font-family: -apple-system,BlinkMacSystemFont,"Apple Color Emoji","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
     line-height: 1.22857;
-    font-size: 17px;
+    font-size: 15px;
     color: #404040;
     font-feature-settings: "tnum";
     font-variant: tabular-nums;
+    /* letter-spacing:2px; */
 }
 
 .wrapper {
@@ -37,10 +38,6 @@ body {
 
 div .publishDate {
     vertical-align: center;
-}
-
-div .publishDate table {
-    margin: 0px;
 }
 
 
@@ -143,13 +140,13 @@ h2 {
 
 p {
     margin-bottom: 10px;
-    line-height: 1.7em;
+    line-height: 1.4em;
     font-size: 0.95em;
     display: block;
     margin-block-start: 1em;
     margin-block-end: 1em;
     margin-inline-start: 0px;
-    margin-inline-end: 0px;
+    margin-inline-end: 0px; 
 }
 
 
@@ -174,6 +171,10 @@ a.browse-all:hover {
     text-decoration: none;
 }
 
+.content {
+    margin-bottom: 40px;
+    text-align: justify;
+}
 
 .content img{
     display: block;
@@ -193,11 +194,16 @@ a.browse-all:hover {
     max-width : 90%
 }
 
+.content li{
+    line-height: 1.4em;
+}
+
 .content ol li,.content ul li{
     margin-left: 20px;
     margin-right: 20px;
-    margin-bottom: 5px;
-    margin-top:5px;
+    margin-bottom: 10px;
+    margin-top:10px;
+    line-height: 1.4em;
 }
 
 .content ol ul,.content ol ol,.content ul ol,.content ul ul{
@@ -310,12 +316,14 @@ article p code, article li code, .discover .content code {
     margin-bottom: 20px;
 }  */
 
+/* tgs */
+
 .tag-list {
     margin-bottom: 5px;
     font-size: 0.75em;
 }
 
-.tag-list td,.tag {
+.tag {
     display: inline-block;
     background-color: #000;
     color: #ddd;
@@ -325,19 +333,63 @@ article p code, article li code, .discover .content code {
 }
 
 
+.tag .tagdate{
+    line-height: 1.8em;
+    background-color: blueviolet;
+}
 
 .tag-list a,
 .tag a {
     text-decoration: none;
 }
 
+/* section headre */
+.section-header{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    vertical-align: bottom;
+}
+
+.float-container::after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.section-header .browse-all {
+    color: #e6241e;
+    font-weight: bold;
+    float: right;
+    line-height: 1em;
+    margin: 0px;
+    padding: 0px;
+    margin-top: 16px;
+    text-decoration: none;
+}
+
+
+
+.section-header h2 {
+    /* display: inline-block; */
+    float: left;
+    font-size: 1.7em;
+    padding-left: 33px;
+    background-repeat: no-repeat;
+    background-size: auto 80%;
+    background-position-y: center;
+    background-image: url(https://swiftbysundell.com/images/latest-black.svg);
+    margin: 0px;
+    font-weight: normal;
+    
+}
+
+/* section-header ending */
+
 .item-page .tag-list {
     display: inline-block;
 }
 
-.content {
-    margin-bottom: 40px;
-}
+
 
 .browse-all {
     display: block;
@@ -350,7 +402,7 @@ article p code, article li code, .discover .content code {
 }
 
 .all-tags li {
-    font-size: 1.4em;
+    font-size: 1em;
     margin-right: 10px;
     padding: 6px 10px;
 }
@@ -381,14 +433,15 @@ hr {
 
 article hr {
     display: block;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-top: 2em;
+    margin-bottom: 2em;
     margin-left: auto;
     margin-right: auto;
     width: 256px;
     border-style: solid;
-    border-color: #7f97b8;
-    border-width: 2px;
+    border-color: #9dafc9;
+    border-width: 0.8px;
+    border-radius: 10px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -446,6 +499,7 @@ article hr {
     background-color: #1A1721;
     margin-left: -5px;
 }
+
 
 .hljs {
     display: block;

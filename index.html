@@ -1,0 +1,496 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Swift笔记本"/><link rel="canonical" href="http://www.fatbobman.com"/><meta name="twitter:url" content="http://www.fatbobman.com"/><meta name="og:url" content="http://www.fatbobman.com"/><title>Swift笔记本</title><meta name="twitter:title" content="Swift笔记本"/><meta name="og:title" content="Swift笔记本"/><meta name="description" content="徐杨的个人博客"/><meta name="twitter:description" content="徐杨的个人博客"/><meta name="og:description" content="徐杨的个人博客"/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Swift笔记本"/><meta name="twitter:image" content="http://www.fatbobman.com/images"/><meta name="og:image" content="http://www.fatbobman.com/images"/></head><body><header><div class="wrapper"><p><a class="logo" href="/"><img src="/images/swift.png"/></a></p><nav><ul><li><a href="/posts">文章</a></li><li><a href="/project">项目</a></li><li><a href="/about">关于</a></li></ul></nav></div></header><div class="wrapper"><ul class="item-list feature grid compact"><li><a href="/"><article>hgdsg<p>sdg</p></article></a></li><li>asadgasg</li><li>sdgasasdsgasd</li></ul><br/><p>df</p><ul class="item-list content"><li>TEST<p>hello</p><hr><p>good</p><ul><li>hello world<ol><li>abc</li><li>dcdasgasdgladgj;asldkgjas;dlkgjasd;lgkjqoie;als dfasjd;lgkjasd apsog as;ldgky asd;lkj;ya g;laskdug alskdjg asdg</li><li>dgd asd;lgkj asdg;js asd;lkjasdg a asd;lkj asdg;lkj asdg;lkj asdy asdg;lkasyd as;ldkgy asdg;lkaysdg lsdg asd<ul><li>hello as;lgkj asdg asd;lgkjy asd;glkj asdgy as;dlgkj asdg;lkjasdg yas;lgkj asdgy;laskdjg yas</li><li>gdf as;dlgky asdgl;khy asd;glk ;asydg ;laskjdg asdy as;dlgkj y as;ldgkj ;laksgy agd<ol><li>hed</li><li>dfdf as;ldkgy asd;lgkj yas;dlkgj as;dglky asd;lgk yasd;lg asgy</li></ol></li></ul></li></ol></li></ul><blockquote><p>good boy!</p></blockquote></li><li>在SwiftUI下对iPad进行适配<blockquote><p>SwiftUI创建初衷之一便是可以高效、可靠的适配多个苹果的硬件平台。在健康笔记2.0开发初始，适配iPad便是我本次的设计目标之一。本文并非教程，只是我在进行本次开发中，对于适配iPad的一些教训和心得。</p></blockquote><h2>我是谁</h2><p>app中的代码必须能高效、清晰的了解当前设备的状况，时刻搞清楚我是谁，我在哪，在干啥等等。因此在项目开始之初我便做了不少的准备并创建了一系列的代码。</p><p>比如，当前的运行设备：</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Device</span> </span>{
+    <span class="hljs-comment">//MARK:当前设备类型 iphone ipad mac</span>
+    <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Devicetype</span></span>{
+        <span class="hljs-keyword">case</span> iphone,ipad,mac
+    }
+    
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">var</span> deviceType:<span class="hljs-type">Devicetype</span>{
+        #<span class="hljs-keyword">if</span> os(macOS)
+        <span class="hljs-keyword">return</span> .mac
+        #<span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">if</span>  <span class="hljs-type">UIDevice</span>.current.userInterfaceIdiom == .pad {
+            <span class="hljs-keyword">return</span> .ipad
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> .iphone
+        }
+        #endif
+ }
+</code></pre><p>如果想要具体了解当前运行设备的型号，Github上有人提供了代码可以返回更精准的信息。</p><p>为了能够在View中方便的利用这些状态信息应对不同的情况，还需要继续做些准备。</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">extension</span> <span class="hljs-title">View</span> </span>{
+    @<span class="hljs-type">ViewBuilder</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ifIs</span>&lt;T&gt;<span class="hljs-params">(<span class="hljs-number">_</span> condition: Bool, transform: <span class="hljs-params">(<span class="hljs-keyword">Self</span>)</span></span></span> -&gt; <span class="hljs-type">T</span>) -&gt; some <span class="hljs-type">View</span> <span class="hljs-keyword">where</span> <span class="hljs-type">T</span>: <span class="hljs-type">View</span> {
+        <span class="hljs-keyword">if</span> condition {
+            transform(<span class="hljs-keyword">self</span>)
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">self</span>
+        }
+    }
+    
+    @<span class="hljs-type">ViewBuilder</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ifElse</span>&lt;T:View,V:View&gt;<span class="hljs-params">( <span class="hljs-number">_</span> condition:Bool,isTransform:<span class="hljs-params">(<span class="hljs-keyword">Self</span>)</span></span></span> -&gt; <span class="hljs-type">T</span>,elseTransform:(<span class="hljs-type">Self</span>) -&gt; <span class="hljs-type">V</span>) -&gt; some <span class="hljs-type">View</span> {
+        <span class="hljs-keyword">if</span> condition {
+            isTransform(<span class="hljs-keyword">self</span>)
+        } <span class="hljs-keyword">else</span> {
+            elseTransform(<span class="hljs-keyword">self</span>)
+        }
+    }
+}
+</code></pre><p>这两段是我使用非常频繁的代码，在SwiftUI下，利用类似的代码可以非常容易的利用同一段代码应对各种不同的状况。</p><p>例如：</p><pre data-language="swift"><code><span class="hljs-type">VStack</span>{
+     <span class="hljs-type">Text</span>(<span class="hljs-string">"hello world"</span>)
+}
+.ifIs(<span class="hljs-type">Deivce</span>.deviceType == .iphone){
+  $<span class="hljs-number">0</span>.frame(width:<span class="hljs-number">150</span>)
+}
+.ifIs(<span class="hljs-type">Device</span>.deviceType == .ipad){
+  $<span class="hljs-number">0</span>.frame(width:<span class="hljs-number">300</span>)
+}
+.ifIs(<span class="hljs-type">Device</span>.deviceType == .mac){
+  $<span class="hljs-number">0</span>.frmae(minWidth:<span class="hljs-number">200</span>,maxWidth:<span class="hljs-number">600</span>)
+}
+</code></pre><p>只有解决了我是谁的问题，后面的工作才能更好的展开</p><h2>躺着还是站着</h2><p>因为健康笔记以列表被主要表现形式的app，最初所以我希望在iphone上始终保持Portrait，在ipad上保持Landscape的形式。不过最终还是决定让其在ipad上同时支持Portrait和Landscape。</p><img src="http://cdn.fatbobman.com/swiftui-ipad-ipadiPhone.png" alt="ipadiphone"/><p>为了更灵活的处理，我没有选择在info.plist中对其进行设定，而是通过在delegate中，针对不同的情况作出响应。</p><img src="http://cdn.fatbobman.com/swiftui-ipad-xcode.png" alt="xcode"/><p>因为无需支持多窗口，所以关闭了multiple windows。另外需要激活Requires full screen才能让delegate作出响应</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppDelegate</span>:<span class="hljs-title">NSObject</span>,<span class="hljs-title">UIApplicationDelegate</span></span>{
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">application</span><span class="hljs-params">(<span class="hljs-number">_</span> application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?)</span></span> -&gt; <span class="hljs-type">UIInterfaceOrientationMask</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-type">Device</span>.deviceType == .ipad
+            ? <span class="hljs-type">UIInterfaceOrientationMask</span>.all
+            : <span class="hljs-type">UIInterfaceOrientationMask</span>.portrait
+    }
+}
+</code></pre><p>在SwiftUI下如何设置Delegate请查看<a href="/posts/swiftui2-new-feature-1/">SwiftUI2.0 —— App、Scene及新的代码结构</a></p><p>如此便可以方便的控制自己想要的app呈现形态了。</p><h2>难以控制的NavigationView</h2><p>SwiftUI的NavigationView本身为了适配做了不少的工作，但效果并不好。</p><p>目前它支持两种style： StackNavigationView、DoubleColumnNavigationViewStyle，三种表现形式：单列、双列、以及三列（sidebar）。虽然看似覆盖了多数的应用，但由于没有提供更多的控制选项，因此用起来并不顺手。</p><p>比如，DoubleColumnNavigationViewStyle，在ipad上的竖屏和横屏时的呈现是不同的。左上角的隐藏按钮不可更改，不可取消。在包含sidebar的三列模式下，逻辑又有不同，不过按钮同样不提供任何替换、取消的能力。</p><p>NavigationLink只能在当前列中响应，另外并不提供控制列宽的能力。</p><p>如果想调整双列NavigationView的列宽，可以使用Introspect，参见<a href="/posts/healthnote2-3rd-package/">介绍几个我在开发健康笔记2用到的Swift或SwiftUI第三方库</a></p><pre data-language="swift"><code><span class="hljs-type">NavigationView</span>{
+  <span class="hljs-type">Text</span>(<span class="hljs-string">"hello"</span>)
+}
+.introspectNavigationController{ navigation <span class="hljs-keyword">in</span>
+    navigation.splitViewController?.maximumPrimaryColumnWidth = <span class="hljs-number">360</span>
+    navigation.splitViewController?.preferredPrimaryColumnWidth = <span class="hljs-number">500.0</span>
+}
+</code></pre><p>为了能够让ipad在竖屏或横屏状态下都固定呈现双列的模式，并且左侧列不可折叠同时也不能出现我想要的折叠按钮，我使用了一个不得已的手段。伪造了一个双列显示的NavigationView。</p><p>针对不同的设备进入不同的rootView</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">HealthNotesApp</span>:<span class="hljs-title">APP</span></span>{
+  <span class="hljs-keyword">var</span> body: some <span class="hljs-type">Scene</span>{
+     rootView()
+  }
+  
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">rootView</span><span class="hljs-params">()</span></span>-&gt; some <span class="hljs-type">View</span>{
+        <span class="hljs-keyword">switch</span> <span class="hljs-type">Device</span>.deviceType {
+        <span class="hljs-keyword">case</span> .ipad:
+            <span class="hljs-keyword">return</span> <span class="hljs-type">AnyView</span>(<span class="hljs-type">ContentView_iPad</span>())
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-type">AnyView</span>(<span class="hljs-type">ContentView_iPhone</span>())
+        }
+    }
+}
+</code></pre><p>在ContentView_iPad中，使用类似代码伪造一个双列形式</p><pre data-language="swift"><code><span class="hljs-type">HStack</span>(spacing:<span class="hljs-number">0</span>){
+      <span class="hljs-type">ItemRootView</span>(item: $item)
+           .frame(width:height)
+       <span class="hljs-type">Divider</span>()
+       <span class="hljs-type">ItemDataRootView</span>()
+            .navigationContent()
+        }
+.edgesIgnoringSafeArea(.all)
+</code></pre><p>如此一来便拥有了上面图片中iPad的显示效果。状态基本上同DoubleColumnNavigationViewStyle的形式是完全一致的。分别都可以设置Toolbar，并且分割线也可以贯穿屏幕。</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">extension</span> <span class="hljs-title">View</span></span>{
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">navigationContent</span><span class="hljs-params">()</span></span> -&gt; some <span class="hljs-type">View</span>{
+        <span class="hljs-type">NavigationView</span>{
+            <span class="hljs-keyword">self</span>
+        }
+        .navigationViewStyle(<span class="hljs-type">StackNavigationViewStyle</span>())
+    }
+}
+</code></pre><p>由于在Ipad下右侧列的视图同时被用在iphone下，在iPhone下它是由NavigationLink激活的，所以仍在NavigationView中，但在iPad下，需要明确的将在放置在NavigationView中。通过 .navigationContent，结合上面的isIf，便可以灵活的控制形态了。</p><p>另外需要针对iPhone和ipad的二级View激活进行分别处理,比如</p><pre data-language="swift"><code><span class="hljs-keyword">if</span> <span class="hljs-type">Device</span>.deviceType  == .iphone {
+                    <span class="hljs-type">NavigationLink</span>(<span class="hljs-string">""</span>, destination: <span class="hljs-type">ItemDataRootView</span>(), isActive: $gotoDataList).frame(width:<span class="hljs-number">0</span>,height:<span class="hljs-number">0</span>)
+            }
+
+<span class="hljs-comment">//在link的button中</span>
+<span class="hljs-type">Button</span>(<span class="hljs-string">"Item1"</span>){
+   store.item = item
+   <span class="hljs-keyword">if</span> <span class="hljs-type">Devie</span>.deviceType == .iphone {
+       gotoDataList.toggle()
+   }
+}
+
+<span class="hljs-comment">//在ItemDataRootView中直接响应store.item即可</span>
+</code></pre><h2>Bug还是特别设计？</h2><p>某些SwiftUI的默认控件在iPad和iPhone下的运行效果和预期有较大差别,</p><p>比如ActionSheet:</p><p>当前AlertSheet在运行iOS14的ipad上的显示位置是几乎不可控的。箭头的位置，内容的显示，和预期都有巨大的差别。我不知道以后都会是这样还是目前的Bug。</p><p>个人不推荐当前在iPad上使用ActionSheet。最终只能在iPad下使用Alert替代了ActionSheet。如果一定要使用ActionSheet，popover或许是更好的选择。</p><p>ContextMenu目前在iPad上有响应上的问题，同样的指令在iPhone上没有问题，在iPad上会出现无法获取值的状况。同样不清楚是Bug还是其他原因。</p><p>比如</p><pre data-language="swift"><code><span class="hljs-type">Text</span>(<span class="hljs-string">"click"</span>)
+.contextMenu{
+  <span class="hljs-type">Button</span>(<span class="hljs-string">"del"</span>){
+     delItem = item
+     <span class="hljs-type">ShowActionSheet</span>.toggle()
+  }
+}
+.<span class="hljs-type">ActionSheet</span>(isPresented:showActionSheet){
+    delSheet(item:delItem)
+}
+</code></pre><p>这段代码在iphone上执行没有任何问题，不过在ipad上，delsheet很有可能会无法获取item。为了避免这个情况，目前只能做些特殊处理</p><pre data-language="swift"><code><span class="hljs-type">DispatchQueue</span>.main.asyncAfter(deadline: .now() + <span class="hljs-number">0.5</span>){
+                  showActionSheet.wrappedValue = <span class="hljs-literal">true</span>
+}
+</code></pre><p>类似上述的问题还有一些，只有当代码在ipad上跑起来多做测试才会发现其中的问题。</p><h2>布局优化</h2><p>由于健康笔记2.0在iPad上显示的左右两列，所以本来在iphone下运行没有问题View,在iPad下就会出现左右不对齐，不对称等问题。所以只要多调试，采用isIf多做处理，问题基本上都会比较容易获得解决。</p><p>仅举一例：</p><pre data-language="swift"><code><span class="hljs-type">List</span>{
+   ...
+}
+.listStyle(<span class="hljs-type">InsetGroupedListStyle</span>())
+</code></pre><p>当它在iphone上作为独占屏幕的View时，显示很完美，但当它显示在IPad的右侧列时，Group上方的留空和左侧列的就不对齐，做点处理就ok了。</p><h2>结尾</h2><p>总之使用SwiftUI适配iPhone和iPad总体来说还是比较容易的。能否充分利用好各自设备的特点主要还是要在交互逻辑和UI设计上多下功夫，代码上的难度不大。</p></li><li>健康笔记<h2>起因</h2><p>之前由于身体原因，我有5年左右的时间基本上都待在家里极少外出。因为治疗的需要，每天都要记录大量的治疗数据以及用药情况。很幸运的是，我的妻子承担了其中大部分的工作，转眼之间便记录了好多个笔记本。</p><p>经过几次手术和治疗，我的身体已经恢复大半，但由于仍要终身服药及定期检查，所以每天还是要记录很多的身体指标以及各种检查、检验数据。</p><p>我也曾尝试使用电子表格或其他的电脑工具来辅助记录，但并不方便。试图寻找相关的手机应用，并没有找到贴切的。</p><p>在这期间，苹果手机的健康应用对我的帮助不小。由于使用了支持自动导入数据的一些测量设备，类似体重、体温、体脂、血压等都会自动的导入到手机中，帮助我整理和分析。</p><p>但系统的健康应用可以录入的数据种类是固定的，我大量日常的数据均无法通过其录入。</p><p>在身体好转了的情况下，我开始考虑自己开发一款能够满足需求的应用。但毕竟已经10多年没接触代码了，真正开始启动这个项目还是很下了不小的决心和功夫。</p><p>通过近半年的学习和开发，健康笔记（Health Notes）就这样逐渐有了些模样。由于受到系统的健康应用很大的影响，健康笔记里的很多布局都和其都有相似之处。</p><p>2020年,健康笔记2.0发布了. 2.0版做出了重大的升级.</p><h2>健康笔记主要的特点</h2><ul><li>多笔记管理 可针对不同用途、不同人群的数据分开记录。允许用户创建多个笔记本，方便您根据自己的需要进行归纳。</li><li>可随意自定义条目使用者可在健康笔记中记录多种类型的数据。能够满足你生活中绝大多数情况下的需要。 每个人所面对的数据内容都有极大的不同，无论怎么专业的机构都无法完全涵盖用户所需要面对的数据种类。健康笔记允许用户自定义条目内容，您可以任意创建自己所需的健康数据条目。</li><li>完善的图表机制 2.0新增了更多的图表显示方式已应对更多的数据种类</li><li>不仅记录数据 健康笔记同时提供完善的文字记录能力，无论是对个别数据的单独备注还是记录生活中的大事小情，都可轻松应对。</li><li>对自己的数据有绝对的控制权 健康笔记可将用户录入的数据按需导出。通过导出成xls,csv格式的文件供其他软件使用。</li><li>云存储，数据永久保存 数据保存在云服务器上，同时支持多机同步，数据安全有保障。</li><li>iPad的全面优化方便使用者更好的利用iPad的屏幕优势，数据管理更加轻松 希望你们将更多的意见和建议更多的反馈给我，帮助健康笔记更好的成长。</li></ul><p>在这里可以下载 <a href="https://apps.apple.com/us/app/health-notes-2/id1534513553"><img src="http://cdn.fatbobman.com/appStoreIcon.svg" alt="pic"/></a></p></li><li>聊一下在SwiftUI中使用CoreData<blockquote><p>本文并非一个教你如何在SwiftUI下使用CoreData的教程。主要探讨的是在我近一年的SwiftUI开发中使用CoreData的教训、经验、心得。</p></blockquote><h2>SwiftUI lifecycle 中如何声明持久化存储和上下文</h2><p>在XCode12中，苹果新增了SwiftUI lifecycle，让App完全的SwiftUI化。不过这就需要我们使用新的方法来声明持久化存储和上下文。</p><p>好像是从beta6开始，XCode 12提供了基于SwiftUI lifecycle的CoreData模板</p><pre data-language="swift"><code>@main
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">CoreDataTestApp</span>: <span class="hljs-title">App</span> </span>{
+    <span class="hljs-comment">//持久化声明</span>
+    <span class="hljs-keyword">let</span> persistenceController = <span class="hljs-type">PersistenceController</span>.shared
+
+    <span class="hljs-keyword">var</span> body: some <span class="hljs-type">Scene</span> {
+        <span class="hljs-type">WindowGroup</span> {
+            <span class="hljs-type">ContentView</span>()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)  
+          <span class="hljs-comment">//上下文注入</span>
+        }
+    }
+}
+</code></pre><p>在它的Presitence中，添加了用于preview的持久化定义</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">PersistenceController</span> </span>{
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> shared = <span class="hljs-type">PersistenceController</span>()
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">var</span> preview: <span class="hljs-type">PersistenceController</span> = {
+        <span class="hljs-keyword">let</span> result = <span class="hljs-type">PersistenceController</span>(inMemory: <span class="hljs-literal">true</span>)
+        <span class="hljs-keyword">let</span> viewContext = result.container.viewContext
+        <span class="hljs-comment">//根据你的实际需要，创建用于preview的数据</span>
+        <span class="hljs-keyword">for</span> <span class="hljs-number">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..&lt;<span class="hljs-number">10</span> {
+            <span class="hljs-keyword">let</span> newItem = <span class="hljs-type">Item</span>(context: viewContext)
+            newItem.timestamp = <span class="hljs-type">Date</span>()
+        }
+        <span class="hljs-keyword">do</span> {
+            <span class="hljs-keyword">try</span> viewContext.save()
+        } <span class="hljs-keyword">catch</span> {
+            <span class="hljs-keyword">let</span> nsError = error <span class="hljs-keyword">as</span> <span class="hljs-type">NSError</span>
+            <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"Unresolved error \(nsError), \(nsError.userInfo)"</span>)
+        }
+        <span class="hljs-keyword">return</span> result
+    }()
+
+    <span class="hljs-keyword">let</span> container: <span class="hljs-type">NSPersistentCloudKitContainer</span>
+    <span class="hljs-comment">//如果是用于preview便将数据保存在内存而非sqlite中</span>
+    <span class="hljs-keyword">init</span>(inMemory: <span class="hljs-type">Bool</span> = <span class="hljs-literal">false</span>) {
+        container = <span class="hljs-type">NSPersistentCloudKitContainer</span>(name: <span class="hljs-string">"Shared"</span>)
+        <span class="hljs-keyword">if</span> inMemory {
+            container.persistentStoreDescriptions.first!.url = <span class="hljs-type">URL</span>(fileURLWithPath: <span class="hljs-string">"/dev/null"</span>)
+        }
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) <span class="hljs-keyword">in</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> error = error <span class="hljs-keyword">as</span> <span class="hljs-type">NSError?</span> {
+                <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"Unresolved error \(error), \(error.userInfo)"</span>)
+            }
+        })
+    }
+}
+</code></pre><p>虽然对于用于preview的持久化设置并不完美，不过苹果也意识到了在SwiftUI1.0中的一个很大问题，无法preview使用了@FetchRequest的视图。</p><p>由于在官方CoreData模板出现前，我已经开始了我的项目构建，因此，我使用了下面的方式来声明</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">HealthNotesApp</span>:<span class="hljs-title">App</span></span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> coreDataStack = <span class="hljs-type">CoreDataStack</span>(modelName: <span class="hljs-string">"Model"</span>) <span class="hljs-comment">//Model.xcdatemodeld</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> context = <span class="hljs-type">DataNoteApp</span>.coreDataStack.managedContext
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">var</span> storeRoot = <span class="hljs-type">Store</span>() 
+   @<span class="hljs-type">UIApplicationDelegateAdaptor</span>(<span class="hljs-type">AppDelegate</span>.<span class="hljs-keyword">self</span>) <span class="hljs-keyword">var</span> delegate
+  <span class="hljs-type">WindowGroup</span> {
+        rootView()
+            .environmentObject(store)
+            .environment(\.managedObjectContext, <span class="hljs-type">DataNoteApp</span>.context)
+  }
+}
+</code></pre><p>在UIKit App Delegate中，我们可以使用如下代码在App任意位置获取上下文</p><pre data-language="swift"><code><span class="hljs-keyword">let</span> context = (<span class="hljs-type">UIApplication</span>.shared.delegate <span class="hljs-keyword">as</span>! <span class="hljs-type">AppDelegate</span>).persistentContainer.viewContext
+</code></pre><p>但由于我们已经没有办法在SwiftUI lifecycle中如此使用，通过上面的声明我们可以利用下面的方法在全局获取想要的上下文或其他想要获得的对象</p><pre data-language="swift"><code><span class="hljs-keyword">let</span> context = <span class="hljs-type">HealthNotesApp</span>.context
+</code></pre><p>比如在 delegate中</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppDelegate</span>:<span class="hljs-title">NSObject</span>,<span class="hljs-title">UIApplicationDelegate</span></span>{
+    
+    <span class="hljs-keyword">let</span> send = <span class="hljs-type">HealthNotesApp</span>.storeRoot.send
+    
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">application</span><span class="hljs-params">(<span class="hljs-number">_</span> application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: <span class="hljs-keyword">Any</span>]?)</span></span> -&gt; <span class="hljs-type">Bool</span> {
+       
+        logDebug(<span class="hljs-string">"app startup on ios"</span>)
+       
+        send(.loadNote)
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">applicationDidFinishLaunching</span><span class="hljs-params">(<span class="hljs-number">_</span> application: UIApplication)</span></span>{
+        
+        logDebug(<span class="hljs-string">"app quit on ios"</span>)
+        send(.counter(.save))
+
+    }
+
+}
+
+<span class="hljs-comment">//或者直接操作数据库，都是可以的</span>
+</code></pre><h2>如何动态设置 @FetchRequest</h2><p>在SwiftUI中，如果无需复杂的数据操作，使用CoreData是非常方便的。在完成xcdatamodeld的设置后，我们就可以在View中轻松的操作数据了。</p><p>我们通常使用如下语句来获取某个entity的数据</p><pre data-language="swift"><code>@<span class="hljs-type">FetchRequest</span>(sortDescriptors: [<span class="hljs-type">NSSortDescriptor</span>(keyPath: \<span class="hljs-type">Student</span>.studentId, ascending: <span class="hljs-literal">true</span>)],
+              predicate:<span class="hljs-type">NSPredicate</span>(format: <span class="hljs-string">"age &gt; 10"</span>),
+              animation: .<span class="hljs-keyword">default</span>) 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> students: <span class="hljs-type">FetchedResults</span>&lt;<span class="hljs-type">Student</span>&gt;
+</code></pre><p>不过如此使用的话，查询条件将无法改变，如果想根据需要调整查询条件，可以使用下面的方法。</p><p>健康笔记2中的部分代码：</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rootView</span>:<span class="hljs-title">View</span></span>{
+    @<span class="hljs-type">State</span> <span class="hljs-keyword">var</span> predicate:<span class="hljs-type">NSPredicate?</span> = <span class="hljs-literal">nil</span>
+    @<span class="hljs-type">State</span> <span class="hljs-keyword">var</span> <span class="hljs-built_in">sort</span> = <span class="hljs-type">NSSortDescriptor</span>(key: <span class="hljs-string">"date"</span>, ascending: <span class="hljs-literal">false</span>)
+    @<span class="hljs-type">StateObject</span> <span class="hljs-keyword">var</span> searchStore = <span class="hljs-type">SearchStore</span>()
+    @<span class="hljs-type">EnvironmentObject</span> <span class="hljs-keyword">var</span> store:<span class="hljs-type">Store</span>
+    <span class="hljs-keyword">var</span> body:some <span class="hljs-type">View</span>{
+      <span class="hljs-type">VStack</span> {
+       <span class="hljs-type">SearchBar</span>(text: $searchStore.searchText) <span class="hljs-comment">//搜索框</span>
+       <span class="hljs-type">MemoList</span>(predicate: predicate, <span class="hljs-built_in">sort</span>: <span class="hljs-built_in">sort</span>,searching:searchStore.showSearch)
+        }
+      .onChange(of: searchStore.text){ <span class="hljs-number">_</span> <span class="hljs-keyword">in</span>
+          getMemos()
+      } 
+    }
+  
+       <span class="hljs-comment">//读取指定范围的memo</span>
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">getMemos</span><span class="hljs-params">()</span></span> {
+        <span class="hljs-keyword">var</span> predicators:[<span class="hljs-type">NSPredicate</span>] = []
+        <span class="hljs-keyword">if</span> !searchStore.searchText.isEmpty &amp;&amp; searchStore.showSearch {
+            <span class="hljs-comment">//memo内容或者item名称包含关键字</span>
+            predicators.append(<span class="hljs-type">NSPredicate</span>(format: <span class="hljs-string">"itemData.item.name contains[cd] %@ OR content contains[cd] %@"</span>, searchStore.searchText,searchStore.searchText))
+        }
+        <span class="hljs-keyword">if</span> star {
+            predicators.append(<span class="hljs-type">NSPredicate</span>(format: <span class="hljs-string">"star = true"</span>))
+        }
+        
+        <span class="hljs-keyword">switch</span> store.state.memo{
+        <span class="hljs-keyword">case</span> .all:
+            <span class="hljs-keyword">break</span>
+        <span class="hljs-keyword">case</span> .memo:
+            <span class="hljs-keyword">if</span> !searchStore.searchText.isEmpty &amp;&amp; noteOption == <span class="hljs-number">1</span> {
+                <span class="hljs-keyword">break</span>
+            }
+            <span class="hljs-keyword">else</span> {
+                predicators.append(<span class="hljs-type">NSPredicate</span>(format: <span class="hljs-string">"itemData.item.note = nil"</span>))
+            }
+        <span class="hljs-keyword">case</span> .note(<span class="hljs-keyword">let</span> note):
+            <span class="hljs-keyword">if</span> !searchStore.searchText.isEmpty &amp;&amp; noteOption == <span class="hljs-number">1</span> {
+                <span class="hljs-keyword">break</span>
+            }
+            <span class="hljs-keyword">else</span> {
+                predicators.append(<span class="hljs-type">NSPredicate</span>(format: <span class="hljs-string">"itemData.item.note = %@"</span>, note))
+            }
+        }
+        
+        withAnimation(.easeInOut){
+            predicate =  <span class="hljs-type">NSCompoundPredicate</span>(type: <span class="hljs-type">NSCompoundPredicate</span>.<span class="hljs-type">LogicalType</span>.and, subpredicates: predicators)
+            <span class="hljs-built_in">sort</span> =  <span class="hljs-type">NSSortDescriptor</span>(key: <span class="hljs-string">"date"</span>, ascending: ascending)
+        }
+    }
+}
+</code></pre><p>上述代码会根据搜索关键字以及一些其他的范围条件，动态的创建predicate，从而获得所需的数据。</p><p>对于类似查询这样的操作，最好配合上Combine来限制数据获取的频次</p><p>例如：</p><pre data-language="swift"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SearchStore</span>:<span class="hljs-title">ObservableObject</span></span>{
+    @<span class="hljs-type">Published</span> <span class="hljs-keyword">var</span> searchText = <span class="hljs-string">""</span>
+    @<span class="hljs-type">Published</span> <span class="hljs-keyword">var</span> text = <span class="hljs-string">""</span>
+    @<span class="hljs-type">Published</span> <span class="hljs-keyword">var</span> showSearch = <span class="hljs-literal">false</span>
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> cancellables:[<span class="hljs-type">AnyCancellable</span>] = []
+    
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">registerPublisher</span><span class="hljs-params">()</span></span>{
+        $searchText
+            .removeDuplicates()
+            .debounce(<span class="hljs-keyword">for</span>: <span class="hljs-number">0.4</span>, scheduler: <span class="hljs-type">DispatchQueue</span>.main)
+            .assign(to: &amp;$text)
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">removePublisher</span><span class="hljs-params">()</span></span>{
+        cancellables.removeAll()
+    }
+    
+}
+</code></pre><p>上述所有代码均缺失了很大部分，仅做思路上的说明</p><h2>增加转换层方便代码开发</h2><p>在开发健康笔记 1.0的时候我经常被类似下面的代码所烦恼</p><pre data-language="swift"><code>@<span class="hljs-type">FetchRequest</span>(sortDescriptors: [<span class="hljs-type">NSSortDescriptor</span>(keyPath: \<span class="hljs-type">Student</span>.name, ascending: <span class="hljs-literal">true</span>)],
+              animation: .<span class="hljs-keyword">default</span>) 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> students: <span class="hljs-type">FetchedResults</span>&lt;<span class="hljs-type">Student</span>&gt;
+
+<span class="hljs-type">ForEach</span>(students){ student <span class="hljs-keyword">in</span>
+  <span class="hljs-type">Text</span>(student.name ?? <span class="hljs-string">""</span>)
+  <span class="hljs-type">Text</span>(<span class="hljs-type">String</span>(student.date ?? <span class="hljs-type">Date</span>()))
+}
+</code></pre><p>在CoreData中，设置Attribute，很多时候并不能完全如愿。</p><p>好几个类型是可选的，比如String，UUID等，如果在已发布的app，将新增的attribute其改为不可选，并设置默认值，将极大的增加迁移的难度。另外，如果使用了NSPersistentCloudKitContainer,由于Cloudkit的atrribute和CoreData并不相同，XCode会强制你将很多Attribute改成你不希望的样式。</p><p>为了提高开发效率，并为未来的修改留出灵活、充分的更改空间，在健康笔记2.0的开发中，我为每个NSManagedObject都增加了一个便于在View和其他数据操作中使用的中间层。</p><p>例如：</p><pre data-language="swift"><code><span class="hljs-meta">@objc</span>(<span class="hljs-type">Student</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Student</span>: <span class="hljs-title">NSManagedObject</span>,<span class="hljs-title">Identifiable</span> </span>{
+    <span class="hljs-meta">@NSManaged</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">var</span> name: <span class="hljs-type">String?</span>
+    @<span class="hljs-type">NSmanaged</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">var</span> birthdate: <span class="hljs-type">Date?</span>
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">StudentViewModel</span>: <span class="hljs-title">Identifiable</span></span>{
+    <span class="hljs-keyword">let</span> name:<span class="hljs-type">String</span>
+    <span class="hljs-keyword">let</span> birthdate:<span class="hljs-type">String</span>
+}
+
+<span class="hljs-class"><span class="hljs-keyword">extension</span> <span class="hljs-title">Student</span></span>{
+   <span class="hljs-keyword">var</span> viewModel:<span class="hljs-type">StudentViewModel</span>(
+        name:name ?? <span class="hljs-string">""</span>
+        birthdate:(birthdate ?? <span class="hljs-type">Date</span>()).<span class="hljs-built_in">toString</span>() <span class="hljs-comment">//举例</span>
+   )
+  
+}
+</code></pre><p>如此一来，在View中调用将非常方便，同时即使更改entity的设置，整个程序的代码修改量也将显著降低。</p><pre data-language="swift"><code><span class="hljs-type">ForEach</span>(students){ student <span class="hljs-keyword">in</span>
+  <span class="hljs-keyword">let</span> student = student.viewModel
+  <span class="hljs-type">Text</span>(student.name)
+  <span class="hljs-type">Text</span>(student.birthdate)
+}
+</code></pre><p>同时，对于数据的其他操作，我也都通过这个viewModel来完成。</p><p>比如：</p><pre data-language="swift"><code><span class="hljs-comment">//MARK:通过ViewModel生成Note数据,所有的prepare动作都需要显示调用 _coreDataSave()</span>
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">_prepareNote</span><span class="hljs-params">(<span class="hljs-number">_</span> viewModel:NoteViewModel)</span></span> -&gt; <span class="hljs-type">Note</span>{
+        <span class="hljs-keyword">let</span> note = <span class="hljs-type">Note</span>(context: context )
+        note.id = viewModel.id 
+        note.index = <span class="hljs-type">Int32</span>(viewModel.index)  
+        note.createDate = viewModel.createDate  
+        note.name = viewModel.name 
+        note.source = <span class="hljs-type">Int32</span>(viewModel.source)  
+        note.descriptionContent = viewModel.descriptionContent 
+        note.color = viewModel.color.rawValue 
+        <span class="hljs-keyword">return</span> note
+    }
+    
+    <span class="hljs-comment">//MARK:更新Note数据,仍需显示调用save</span>
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">_updateNote</span><span class="hljs-params">(<span class="hljs-number">_</span> note:Note,<span class="hljs-number">_</span> viewModel:NoteViewModel)</span></span> -&gt; <span class="hljs-type">Note</span> {
+        note.name = viewModel.name
+        note.source = <span class="hljs-type">Int32</span>(viewModel.source)
+        note.descriptionContent = viewModel.descriptionContent
+        note.color = viewModel.color.rawValue
+        <span class="hljs-keyword">return</span> note
+    }
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newNote</span><span class="hljs-params">(noteViewModel:NoteViewModel)</span></span> -&gt; <span class="hljs-type">AnyPublisher</span>&lt;<span class="hljs-type">AppAction</span>,<span class="hljs-type">Never</span>&gt; {
+       <span class="hljs-keyword">let</span> <span class="hljs-number">_</span> = _prepareNote(noteViewModel)
+       <span class="hljs-keyword">if</span>  !_coreDataSave() {
+            logDebug(<span class="hljs-string">"新建Note出现错误"</span>)
+       }
+       <span class="hljs-keyword">return</span> <span class="hljs-type">Just</span>(<span class="hljs-type">AppAction</span>.<span class="hljs-keyword">none</span>).eraseToAnyPublisher()
+    }
+    
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">editNote</span><span class="hljs-params">(note:Note,newNoteViewModel:NoteViewModel)</span></span> -&gt; <span class="hljs-type">AnyPublisher</span>&lt;<span class="hljs-type">AppAction</span>,<span class="hljs-type">Never</span>&gt;{
+        <span class="hljs-keyword">let</span> <span class="hljs-number">_</span> = _updateNote(note, newNoteViewModel)
+        <span class="hljs-keyword">if</span> !_coreDataSave() {
+            logDebug(<span class="hljs-string">"更新Note出现错误"</span>)
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-type">Just</span>(<span class="hljs-type">AppAction</span>.<span class="hljs-keyword">none</span>).eraseToAnyPublisher()
+}
+</code></pre><p>在View中调用</p><pre data-language="swift"><code><span class="hljs-type">Button</span>(<span class="hljs-string">"New"</span>){
+      <span class="hljs-keyword">let</span> noteViewModel = <span class="hljs-type">NoteViewModel</span>(createDate: <span class="hljs-type">Date</span>(), descriptionContent: myState.noteDescription, id: <span class="hljs-type">UUID</span>(), index: -<span class="hljs-number">1</span>, name: myState.noteName, source: <span class="hljs-number">0</span>, color: .<span class="hljs-keyword">none</span>)
+     store.send(.newNote(noteViewModel: noteViewModel))
+     presentationMode.wrappedValue.dismiss()
+}
+</code></pre><p>从而将可选值或者类型转换控制在最小范围</p><h2>使用NSPersistentCloudKitContainer 需要注意的问题</h2><p>从iOS13开始，苹果提供了NSPersistentCloudKitContainer，让app可以以最简单的方式享有了数据库云同步功能。</p><p>不过在使用中，我们需要注意几个问题。</p><ul><li>Attribute 在上一节提高过，由于Cloudkit的数据设定和CoreData并不完全兼容，因此如果你在项目初始阶段是使用NSPersistentContainer进行开发的，当将代码改成NSPersistentCloudKitContainer后，XCode可能会提示你某些Attribute不兼容的情况。如果你采用了中间层处理数据，修改起来会很方便，否则你需要对已完成的代码做出不少的修改和调整。我通常为了开发调试的效率，只有到最后的时候才会使用NSPersistentCloudKitContainer，因此这个问题会比较突出。</li></ul><ul><li>合并策略 奇怪的是，在XCode的CoreData（点选使用CloudKit）默认模板中，并没有设定合并策略。如果没有设置的话，当app的数据进行云同步时，时长会出现合并错误，并且@FetchRequest也并不会在有数据发生变动时对View进行刷新。因此我们需要自己明确数据的合并策略。</li></ul><pre data-language="swift"><code>      <span class="hljs-built_in">lazy</span> <span class="hljs-keyword">var</span> persistentContainer: <span class="hljs-type">NSPersistentCloudKitContainer</span> = {
+          <span class="hljs-keyword">let</span> container = <span class="hljs-type">NSPersistentCloudKitContainer</span>(name: modelName)
+          container.loadPersistentStores(completionHandler: { (storeDescription, error) <span class="hljs-keyword">in</span>
+              <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> error = error <span class="hljs-keyword">as</span> <span class="hljs-type">NSError?</span> {
+                  <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"Unresolved error \(error), \(error.userInfo)"</span>)
+              }
+          })
+          <span class="hljs-comment">//需要显式表明下面的合并策略,否则会出现合并错误!</span>
+          container.viewContext.automaticallyMergesChangesFromParent = <span class="hljs-literal">true</span>
+          container.viewContext.mergePolicy = <span class="hljs-type">NSMergeByPropertyObjectTrumpMergePolicy</span>
+          <span class="hljs-keyword">return</span> container
+      }()
+</code></pre><ul><li>调试信息 当打开云同步后，在调试信息中将出现大量的数据同步调试信息，严重影响了对于其他调试信息的观察。虽然可以通过启动命令屏蔽掉数据同步信息，但有时候我还是需要对其进行观察的。目前我使用了一个临时的解决方案。</li></ul><pre data-language="swift"><code>  #<span class="hljs-keyword">if</span> !targetEnvironment(macCatalyst) &amp;&amp; canImport(<span class="hljs-type">OSLog</span>)
+  <span class="hljs-keyword">import</span> OSLog
+  <span class="hljs-keyword">let</span> logger = <span class="hljs-type">Logger</span>.<span class="hljs-keyword">init</span>(subsystem: <span class="hljs-string">"com.fatbobman.DataNote"</span>, category: <span class="hljs-string">"main"</span>) <span class="hljs-comment">//调试用</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">logDebug</span><span class="hljs-params">(<span class="hljs-number">_</span> text:String,enable:Bool = <span class="hljs-literal">true</span>)</span></span>{
+      #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span>
+      <span class="hljs-keyword">if</span> enable {
+          logger.debug(<span class="hljs-string">"\(text)"</span>)
+      }
+      #endif
+  }
+  #<span class="hljs-keyword">else</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">logDebug</span><span class="hljs-params">(<span class="hljs-number">_</span> text:String,enable:Bool = <span class="hljs-literal">true</span>)</span></span>{
+      <span class="hljs-built_in">print</span>(text,<span class="hljs-string">"$$$$"</span>)
+  }
+  #endif
+</code></pre><p>对于需要显示调试信息的地方</p><pre data-language="swift"><code>  logDebug(<span class="hljs-string">"数据格式错误"</span>)
+</code></pre><p>然后通过在Debug窗口中将Filter设置为$$$$来屏蔽掉暂时不想看到的其他信息</p><h2>不要用SQL的思维限制了CoreData的能力</h2><p>CoreData虽然主要是采用Sqlite来作为数据存储方案，不过对于它的数据对象操作不要完全套用Sql中的惯用思维。</p><p>一些例子</p><p>排序：</p><pre data-language="swift"><code><span class="hljs-comment">//Sql式的</span>
+<span class="hljs-type">NSSortDescriptor</span>(key: <span class="hljs-string">"name"</span>, ascending: <span class="hljs-literal">true</span>)
+<span class="hljs-comment">//更CoreData化，不会出现拼写错误</span>
+<span class="hljs-type">NSSortDescriptor</span>(keyPath: \<span class="hljs-type">Student</span>.name, ascending: <span class="hljs-literal">true</span>)
+</code></pre><p>在断言中不适用子查询而直接比较对象：</p><pre data-language="swift"><code><span class="hljs-type">NSPredicate</span>(format: <span class="hljs-string">"itemData.item.name = %@"</span>,name)
+</code></pre><p>Count:</p><pre data-language="swift"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">_getCount</span><span class="hljs-params">(entity:String,predicate:NSPredicate?)</span></span> -&gt; <span class="hljs-type">Int</span>{
+        <span class="hljs-keyword">let</span> fetchRequest = <span class="hljs-type">NSFetchRequest</span>&lt;<span class="hljs-type">NSNumber</span>&gt;(entityName: entity)  
+        fetchRequest.predicate = predicate
+        fetchRequest.resultType = .countResultType
+        
+        <span class="hljs-keyword">do</span> {
+            <span class="hljs-keyword">let</span> results  = <span class="hljs-keyword">try</span> context.fetch(fetchRequest)
+            <span class="hljs-keyword">let</span> <span class="hljs-built_in">count</span> = results.first!.intValue
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">count</span>
+        }
+        <span class="hljs-keyword">catch</span> {
+            #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span>
+            logDebug(<span class="hljs-string">"\(error.localizedDescription)"</span>)
+            #endif
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>
+        }
+    }
+</code></pre><p>或者更加简单的count</p><pre data-language="swift"><code>@<span class="hljs-type">FetchRequest</span>(sortDescriptors: [<span class="hljs-type">NSSortDescriptor</span>(keyPath: \<span class="hljs-type">Student</span>.name, ascending: <span class="hljs-literal">true</span>)],
+              animation: .<span class="hljs-keyword">default</span>) 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> students: <span class="hljs-type">FetchedResults</span>&lt;<span class="hljs-type">Student</span>&gt;
+
+sutudents.<span class="hljs-built_in">count</span>
+</code></pre><p>对于数据量不大的情况，我们也可以不采用上面的动态predicate方式，在View中直接对获取后的数据进行操作，比如：</p><pre data-language="swift"><code>@<span class="hljs-type">FetchRequest</span>(sortDescriptors: [<span class="hljs-type">NSSortDescriptor</span>(keyPath: \<span class="hljs-type">Student</span>.name, ascending: <span class="hljs-literal">true</span>)],
+              animation: .<span class="hljs-keyword">default</span>) 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> studentDatas: <span class="hljs-type">FetchedResults</span>&lt;<span class="hljs-type">Student</span>&gt;
+@<span class="hljs-type">State</span> <span class="hljs-keyword">var</span> students:[<span class="hljs-type">Student</span>] = []
+<span class="hljs-keyword">var</span> body:some <span class="hljs-type">View</span>{
+  <span class="hljs-type">List</span>{
+        <span class="hljs-type">ForEach</span>(students){ student <span class="hljs-keyword">in</span>
+           <span class="hljs-type">Text</span>(student.viewModel.name)
+         }
+        }
+        .onReceive(studentDatas.publisher){ <span class="hljs-number">_</span> <span class="hljs-keyword">in</span>
+            students = studentDatas.<span class="hljs-built_in">filter</span>{ student <span class="hljs-keyword">in</span>
+                student.viewModel.age &gt; <span class="hljs-number">10</span>
+            }
+        }
+   }
+}
+</code></pre><p>总之数据皆对象</p></li><li>介绍几个我在开发健康笔记2用到的Swift或SwiftUI第三方库<h2><a href="https://github.com/SwiftUIX/SwiftUIX">SwiftUIX</a></h2><blockquote><p>SwiftUIX试图弥补仍处于新生阶段的SwiftUI框架的空白，提供了广泛的组件，扩展和实用程序套件来补充标准库。 迄今为止，该项目是缺少的UIKit / AppKit功能的最完整的移植，力求使其以大多数类似于Apple的方式交付。 这个项目的目标是补充SwiftUI标准库，提供数百种扩展和视图，使开发人员可以轻松地通过SwiftUI的革命来构建应用程序。</p></blockquote><p>提供了非常多的苹果本应提供但没有提供的功能扩展。项目的发起者非常年轻，但mac的开发经验十分丰富。到目前为止一直保持的较高的更新频率和维护状态。这个库同时支持UIKit和Appkit，对于需要做苹果生态全平台的用户十分友好。由于目前SwiftUI的List和LazyVStack的问题还很多，他自己在开发中也深受其苦，前天在交流中，他已经决定重做CocoaList功能，尤其提高对Fetchrequest的支持。</p><p>对于进行SwiftUI开发的朋友，它是十分值得推荐的。</p><p>目前的问题是文档太少。不过对我来说也未尝不是一个好事。在研究它的用法过程中，给了我更多的机会阅读并学习它的代码，对SwiftUI，UIkit等有了更多的认识和了解。</p><h2><a href="https://github.com/danielgindi/Charts">Charts</a></h2><blockquote><p>denielgindi对著名的安卓图表库 MPAndroidChart的Swift移植。是目前不多的纯Swift解决方案。它的优势也是同时支持UIKit和Appkit，同时提供了不错的Demo社区活跃度。</p></blockquote><p>不过他的开发者好像不打算在3.x版本上在增加太多的功能，非常多目前急需并且已有解决方案的功能并没有被当前版本接受。所以整体的视觉呈现还是比较传统的。社区上对于功能的讨论不少，但合并的极少，4.0的版本好像也已经开发了不短的时间了，不过进度好像也不是特别理想。</p><p>从效率上讲，Charts应该是非常合格的了。</p><p><a href="https://www.hangge.com">航歌</a> 上面有非常详细的中文使用教程，对我的学习帮助很大。</p><p>为了健康笔记开发的需要，我在当前3.6的版本上合并了两个社区上较为成熟的解决方案：</p><ul><li>圆角Bar</li></ul><pre data-language="swift"><code>  dataSet.roundedCorners = [.topLeft,.topRight]
+</code></pre><ul><li>渐变色Bar</li></ul><pre data-language="swift"><code>  dataSet.drawBarGradientEnabled = <span class="hljs-literal">true</span>
+              dataSet.colors = [<span class="hljs-type">UIColor</span>(named: <span class="hljs-string">"barColor1"</span>)!, <span class="hljs-type">UIColor</span>(named: <span class="hljs-string">"barColor1"</span>)!, <span class="hljs-type">UIColor</span>(named: <span class="hljs-string">"barColor2"</span>)!]
+              dataSet.gradientPositions = [<span class="hljs-number">0</span>, <span class="hljs-number">40</span>, <span class="hljs-number">100</span>]
+</code></pre><p>由于当前的Charts本身并不支持对于图表滚动后停止事件的响应，我自己为它增加了停止响应。</p><pre data-language="swift"><code>        <span class="hljs-comment">//滚动终止时调用</span>
+        <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">chartScrollStop</span><span class="hljs-params">(<span class="hljs-number">_</span> chartView:ChartViewBase)</span></span>{
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">"stopped"</span>)
+        }
+</code></pre><p>修改后的代码<a href="https://github.com/fatbobman/Charts">在此可以获得</a>。</p><h2><a href="https://github.com/siteline/SwiftUI-Introspect">Introspect</a></h2><blockquote><p>Introspect允许您获取SwiftUI视图的基础UIKit或AppKit元素。 例如，使用Introspect，您可以访问UITableView来修改分隔符，或访问UINavigationController来自定义选项卡栏。</p></blockquote><p>有一个非常推荐的利器。目前官方对于SwiftUI中的控件提供的可控选项很少，如果想做一些深度定制的话，通常就是自己写代码来重新包装UIkit控件。不过introspect提供了一个非常巧妙的办法通过简单的注入方式便可以对SwiftUI控件做更多的调整。</p><p>比如：</p><p>只有当内容超出显示范围才进行滚动</p><pre data-language="swift"><code><span class="hljs-type">ScrollView</span>{
+    ....
+}
+.introspectScrollView{ scrollView <span class="hljs-keyword">in</span>
+        crollView.isScrollEnabled = scrollView.contentSize.height &gt; scrollView.frame.height
+               }
+</code></pre><p>显示TextField的clear按钮</p><pre data-language="swift"><code><span class="hljs-type">TextField</span>(<span class="hljs-string">"note_noteName"</span>,text: $myState.noteName)
+          .introspectTextField{ text <span class="hljs-keyword">in</span>
+             text.clearButtonMode = .whileEditing
+           }
+</code></pre><p>对于新的控件它本身还没提供具体支持的也可以方便的注入</p><p>修改SwiftUI2.0中新提供的TextEditor背景色</p><pre data-language="swift"><code><span class="hljs-type">TextEditor</span>(text: $text)
+                .introspect(selector: <span class="hljs-type">TargetViewSelector</span>.sibling){ textView <span class="hljs-keyword">in</span>
+                    textView.backgroundColor = .clear
+                }
+</code></pre><p>等等。类似的用法在我整个的开发中的使用频率是很高的。</p><h2><a href="https://github.com/malcommac/SwiftDate">SwiftDate</a></h2><blockquote><p>使用Swift编写的时间日期处理库。同时支持苹果平台以及Linux。</p></blockquote><p>它提供了非常详尽的文档，航哥上也有非常好的中文教程。</p><p>由于健康笔记需要对数据进行不少处理，尤其是需要将相同时间粒度的数据进行合并比较。SwiftDate提供的Region方案提供了完美的解决途径。</p><p>在SwiftDate中，我多数使用它提供的DateInRegion来处理日期。通过</p><pre data-language="swift"><code><span class="hljs-type">SwiftDate</span>.defaultRegion = region
+</code></pre><p>我几乎无需关心日期的本地化问题。而且它也提供了部分的日期时间的本地化显示方案（但并不完美）。</p><p>一些使用举例：</p><p>除非用户在app中设定了特定的时区，否则使用当前设备的默认设置：</p><pre data-language="swift"><code><span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> data = <span class="hljs-type">UserDefaults</span>.standard.data(forKey: <span class="hljs-string">"dateRegion"</span>),
+           <span class="hljs-keyword">let</span> region = <span class="hljs-keyword">try</span>? <span class="hljs-type">JSONDecoder</span>().decode(<span class="hljs-type">Region</span>.<span class="hljs-keyword">self</span>, from: data) {
+            <span class="hljs-type">SwiftDate</span>.defaultRegion = region
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-type">SwiftDate</span>.defaultRegion = <span class="hljs-type">Region</span>(calendar: <span class="hljs-type">Calendars</span>.gregorian, zone: <span class="hljs-type">Zones</span>.current, locale: <span class="hljs-type">Locales</span>.current)
+        }
+</code></pre><p>判断某个日期和指定日期的天数差（本地时区）：</p><pre data-language="swift"><code><span class="hljs-keyword">let</span> startDate = <span class="hljs-type">DateInRegion</span>(datas.first!.viewModel.date1).dateTruncated(at: [.hour,.minute,.second])!
+duration = date.difference(<span class="hljs-keyword">in</span>: .day, from: startDate) ?? <span class="hljs-number">0</span>
+</code></pre><p>如果你的程序需要对日期进行频繁的处理或者有较多的本地化需求时，SwiftDate是非常好的选择！</p><h2><a href="https://github.com/fatbobman/SwiftUIOverlayContainer">SwiftUIOverlayContainer</a></h2><blockquote><p>SwiftUIOverlayContainer本身并不提供任何预置的视图样式，不过通过它，你有充分的自有度来实现自己需要的视图效果。OverlayContainer的主要目的在于帮助你完成动画、交互、样式定制等基础工作，使开发者能够将时间和精力仅需投入在视图本身的代码上。</p></blockquote><p>这是我自己写的一个库，这次通过它实现的屏幕侧边滑动菜单。</p><p>本来它的用途主要不是做这个的，暂时使用它来完成侧向滑动菜单也是权宜之计，表现尚可。</p><h2><a href="https://github.com/weichsel/ZIPFoundation">ZIPFoundation</a></h2><blockquote><p>ZIP Foundation是一个用于创建，读取和修改ZIP存档文件的库。 它是用Swift编写的，基于Apple的libcompression来实现高性能和高能效。</p></blockquote><p>小巧、高效，使用便捷。健康笔记在数据导入导出时，使用它来完成zip文件的操作。</p><p>比如解压备份数据：</p><pre data-language="swift"><code><span class="hljs-comment">//打开沙盒读取权限</span>
+   <span class="hljs-number">_</span> = url.startAccessingSecurityScopedResource() 
+<span class="hljs-comment">//解压</span>
+   <span class="hljs-keyword">do</span> {
+      <span class="hljs-keyword">try</span> <span class="hljs-type">FileManager</span>.<span class="hljs-keyword">default</span>.unzipItem(at: url, to: <span class="hljs-type">URL</span>(fileURLWithPath: <span class="hljs-type">NSTemporaryDirectory</span>()))
+        }
+        <span class="hljs-keyword">catch</span> {
+          
+        }
+</code></pre><h2><a href="https://github.com/keitaoouchi/MarkdownView">MarkdownView</a></h2><blockquote><p>基于WKwebView实现的Markdown文件Viewer。对md的解析是通过调用js库来完成的。</p></blockquote><p>由于SwiftUI的Text文本排版能力几乎为零，因此我选择使用md格式来保存app所需的一些文字显示，比如隐私政策等。</p><p>MarkdownView的渲染效率一般，但我的显示需求并不大，所以感觉不明显。但它的开发者对js文件进行了加扰处理，所以如果你想对其中它所调用的例如mardown-it进行更多配置的话，就几乎不可能了。</p><p>另外，通过UIViewRepresentable对其进行封装，在SwiftUI下是无法正确获取frame的尺寸的，从而无法正确显示。我对于UIkit所知甚少，只能做了最简单的修改，勉强让其可以在SwiftUI下完成所需要的功能。</p><p>修改后的版本可在<a href="https://github.com/fatbobman/MarkdownView">这里下载</a></p><p>另外，我在UIViewRepresentable包装中增加了一些简单的修改，使其可以方便的将md中的图片，替换成Bundle中的本地图片。</p><p>调用代码 <a href="https://github.com/fatbobman/ShareCode/blob/main/MarkDownView.swift">下载</a></p><h2><a href="https://github.com/avielg/ExcelExport/blob/master/Sources/ExcelExport/ExcelExport.swift">ExcelExport</a></h2><blockquote><p>生成XSL文件的Swift代码。</p></blockquote><p>这段代码有一段时间了，不过去年又做了更新，不过我感觉更新后的版本还不如之前的。但它的新版本不支持Date的字段导出，老版本导出的Date字段格式在Excel中也有问题。我合并了两个版本，并且让其在命名上对SwiftUI更加友好。</p><p>修改后的代码 <a href="https://github.com/fatbobman/ShareCode/blob/main/ExcelExport">下载</a></p><p>必须对日期做如下处理，日期字段才能被Excel顺利识别</p><pre data-language="swift"><code> <span class="hljs-keyword">let</span> date = <span class="hljs-type">DateInRegion</span>(memo.viewModel.date).toFormat(<span class="hljs-string">"yyyy-MM-dd"</span>)
+ <span class="hljs-keyword">let</span> time = <span class="hljs-type">DateInRegion</span>(memo.viewModel.date).toFormat(<span class="hljs-string">"HH:mm:ss.FFF"</span>)
+ <span class="hljs-keyword">let</span> dateCell = <span class="hljs-type">ExcelCell</span>(date + <span class="hljs-string">"T"</span> + time,type: .dateTime)
+</code></pre><p>上述的库都被使用在 <a href="https://apps.apple.com/us/app/health-notes-2/id1534513553">健康笔记2.0</a> 中。如想查看更多的演示，可以移步</p></li><li>健康笔记2.0开发随笔（六）<p>收尾工作往往是最枯燥的。</p><p>最近这10几天，主要的工作都是查找bug，改进性能，反复测试数据的稳定性，以及更加枯燥的文档准备工作。</p><p>向app store提交反倒异常顺利，中间只出现了一次反复。苹果要我确认是否会滥用用户的数据，在明确回复不会之后就通过了。想想去年底健康笔记1.0的上线反复折腾了我10多天。</p><p>XCode 12中的StoreKit对于调试应用内的购买实在是太方便了，在开发的最后阶段，我将app分成了基础版和专业版。基础版其实已经能应对生活中绝大多数的需求了。通过StoreKit的模拟环境，我的应用内购买没有使用任何沙盒测试便一次性的开发调试成功，并且上线后也运行正常。极大的提高了效率！</p><p>在本次历时近两个月的开发过程中，基本上没走太多弯路。真正让我消耗精力的反倒是和iOS 14以及SwiftUI 2.0中的Bug斗智斗勇。很多奇怪的问题，在对自己代码反复的检查之后才能基本确认是系统的原因，然后还需要设法用最少的代码重现问题得以最终确认。从WWDC20过后，目前已经给苹果提交了10几条的Feedback。其中超过半数在不断的版本升级后得到了修复。</p><p>下面是我在这次的开发中使用的第三方库，我最近会对这些库进行详细的介绍：</p><ul><li>SwiftUIX</li><li>Charts</li><li>Introspect</li><li>ZIPFoundation</li><li>SwiftUIOverlayContainer</li><li>SwiftDate</li><li>MarkdownView</li></ul><p>iPad的适配工作量也比想象中的大。尽管SwiftUI己经提供了极大的方便，但如果想更好的利用iPad的特性的话，还是有不少工作需要完成的。</p><p>本地化也是这次开发的一个目标，难度不太大，但工作量不小。</p></li></ul></div><footer><p>Copyright &copy; 徐杨 2021 <a href="http://beian.miit.gov.cn">辽ICP备20006550</a></p><p>Generated using <a href="https://github.com/johnsundell/publish">Publish</a></p><p><a href="/feed.rss">RSS feed</a></p><script>
+    // dynamic User by Hux
+    var _gaId = 'UA-165296388-1';
+    var _gaDomain = 'fatbobman.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = '14e5d60a3ea6276655f9d14c58b1fcd0';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script></footer></body></html>

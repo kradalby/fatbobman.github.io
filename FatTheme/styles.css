@@ -45,15 +45,15 @@ div .publishDate {
 
 header {
     position: relative;
-    background-color: var(--header-background-color-light);
+    /* background-color: var(--header-background-color-light); */
 /*    background-image: url('http://www.fatbobman.com/img/header_img/homesea.jpg');*/
     background-attachment: scroll;
 /*    background-size: cover;*/
-    color: #fff;
+    /* color: #fff; */
     line-height: 1.5em;
     padding: 0 20px;
-    height: 300px;
-    border-bottom: 4px #ff8000 solid; /* header 底部线条 */
+    height: 250px;
+    /* border-bottom: 4px #ff8000 solid;  */
 }
 
 header .wrapper {
@@ -63,36 +63,40 @@ header .wrapper {
 
 header a {
     display: inline-block;
-}
-
-header p a {
     text-decoration: none;
 }
 
+
 header .logo {
-    width: 500px;
+    /* width: 500px; */
     max-width: 80%;
-    margin-bottom: 6px;
+    margin-top: 50px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
+
 
 
 /* nav */
 
 nav {
     display: inline-block;
-    background-color: #fff;
-    border-radius: 10px;
-    margin-top: 18px;
+    /* background-color: #fff; */
+    /* border-radius: 10px; */
+    margin-top: 50px;
     overflow: hidden;
 }
 
 header nav li {
     display: inline-block;
+    margin-left:10px;
+    margin-right:10px;
 }
 
 header nav a {
     display: block;
-    color: #009688;
+    /* color: */
     padding: 0 10px;
     line-height: 30px;
     text-decoration: none;
@@ -100,12 +104,12 @@ header nav a {
 
 header nav a:hover{
     color: #fff;
-    background-color: #01675D;
+    background-color:var(--healthnote-green);
 }
 
 header nav .selected {
     color: #fff;
-    background-color: #01675D;
+    background-color: var(--healthnote-green);
 }
 
 
@@ -130,25 +134,97 @@ header nav .search.selected a,
 
 
 h1 {
+    margin-top: 20px;
     margin-bottom: 20px;
     font-size: 2em;
 }
 
 h2 {
-    margin: 20px 0;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    font-size: 1.7em;
+    text-align: left;
+}
+
+h3 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-size: 1.5em;
+    text-align: left;
+}
+
+h4{
+    margin-bottom: 7px;
+    margin-top: 7px;
+    font-size: 1.3em;
+    text-align: left;
+}
+
+h5{
+    margin-bottom: 7px;
+    margin-top: 7px;
+    font-size: 1.2em;
+}
+
+h6 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: normal;
+}
+
+h6 {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 p {
+    margin: 0px;
     margin-bottom: 10px;
-    line-height: 1.4em;
-    font-size: 0.95em;
+    line-height: 1.6em;
+    font-size: 1em;
     display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
     margin-inline-start: 0px;
     margin-inline-end: 0px; 
+    text-align: justify;
 }
 
+
+
+/* table */
+
+.content thead {
+    background-color:lightslategrey;
+    text-align: center;
+}
+
+.content table
+{
+  border-collapse:collapse;
+  max-width: 80%;
+  min-width: 30%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content table,th, td
+{
+  border: 1px solid gray;
+}
+
+.content td{
+    padding: 5px;
+}
+
+
+/* table,tr, td
+  {
+  border: 1px solid black;
+  } */
 
 /* Links */
 a {
@@ -194,16 +270,21 @@ a.browse-all:hover {
     max-width : 90%
 }
 
-.content li{
-    line-height: 1.4em;
+.content li
+{
+    line-height: 1.6em;
+}
+
+.content ol{
+    line-height: 1.6em;
 }
 
 .content ol li,.content ul li{
     margin-left: 20px;
     margin-right: 20px;
-    margin-bottom: 10px;
-    margin-top:10px;
-    line-height: 1.4em;
+    margin-bottom: 0px;
+    margin-top:0px;
+    line-height: 1.6em;
 }
 
 .content ol ul,.content ol ol,.content ul ol,.content ul ul{
@@ -215,8 +296,17 @@ a.browse-all:hover {
     text-decoration: underline;
 }
 
+article h1{
+    color: var(--item-title-color);
+}
+
 .description {
     margin-bottom: 40px;
+}
+
+blockquote {
+    margin-top: 10px ;
+    margin-bottom: 10px;
 }
 
 .article p.info, blockquote p, .sponsorship .content > ul, .services .content > ul {
@@ -238,6 +328,70 @@ article p code, article li code, .discover .content code {
     line-break: anywhere;
 }
 
+
+/* index-list */
+.index-list {
+    padding: 0px;
+}
+
+
+
+
+.index-list ul.indexul{
+    padding:0px;
+    margin: 0px;
+}
+
+.index-list li.indexli{
+    background-color: var(--content-background-color-light);
+    margin: 0px;
+    margin-bottom: 20px;
+    list-style: none;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+.index-list li article h2{
+    font-size: 1.1em;
+}
+
+.index-list li article h3,
+.index-list li article h4,
+.index-list li article h5
+{
+    font-size: 1.0em;
+}
+
+.index-item-more  {
+    color: var(--index-item-more-color-light);
+    font-weight: normal;
+    float: right;
+    line-height: 1em;
+    margin: 0px;
+    padding: 0px;
+    margin-top: 16px;
+    text-decoration: none;
+}
+
+.index-item-more a{
+    text-decoration: none;
+}
+.index-title{
+    color:var(--item-title-color);
+}
+
+.index-item-more a:hover{
+    color:var(--item-title-hover-color);
+}
+
+.index-title a{
+    text-decoration:none;
+}
+
+.index-title a:hover{
+    color:var(--item-title-hover-color);
+}
 
 /* Grid */
 .grid {
@@ -288,13 +442,14 @@ article p code, article li code, .discover .content code {
     margin: 0px;
 }
 
+
 /* item-list */
 
 .item-list>li {
     display: block;
-    padding: 20px;
+    padding: 0px;
     border-radius: 10px;
-    background-color: #eee;
+    background-color: var(--content-background-color-light);
     margin-bottom: 20px;
 }
 
@@ -305,11 +460,23 @@ article p code, article li code, .discover .content code {
 .item-list h1 {
     margin-bottom: 15px;
     font-size: 1.3em;
+    font-weight: normal;
+    color: var(--item-title-color);
 }
 
 .item-list p {
     margin-bottom: 0;
 }
+
+.item-list article{
+    padding: 5px 20px 20px 20px;
+}
+
+.itme-list-title a:hover{
+    color:var(--item-title-hover-color);
+}
+
+
 
 /* .item-list .grid {
     margin-top: 20px;
@@ -343,11 +510,21 @@ article p code, article li code, .discover .content code {
     text-decoration: none;
 }
 
+
+.tag-detail-header{
+    font-size: 18px;
+    margin-bottom: 10px;
+    vertical-align: bottom;
+}
+
+.tag-detail-header a:hover{
+    color:red;
+}
+
 /* section headre */
 .section-header{
     margin-top: 15px;
     margin-bottom: 15px;
-    vertical-align: bottom;
 }
 
 .float-container::after {
@@ -357,30 +534,47 @@ article p code, article li code, .discover .content code {
 }
 
 .section-header .browse-all {
-    color: #e6241e;
+    color: var(--item-title-color);
     font-weight: bold;
     float: right;
     line-height: 1em;
     margin: 0px;
     padding: 0px;
-    margin-top: 16px;
+    margin-top: 8px;
     text-decoration: none;
 }
+
+.browse-all:hover{
+    color: var(--item-title-hover-color);
+}
+
+.browse-all-tag {
+    color: var(--item-title-color);
+    font-weight: bold;
+    float: right;
+    line-height: 1em;
+    margin: 0px;
+    padding: 0px;
+    margin-top: 10px;
+    text-decoration: none;
+    font-size: 0.8em;
+}
+
 
 
 
 .section-header h2 {
     /* display: inline-block; */
     float: left;
-    font-size: 1.7em;
-    padding-left: 33px;
+    font-size: 1.4em;
+    padding-left: 25px;
     background-repeat: no-repeat;
     background-size: auto 80%;
     background-position-y: center;
-    background-image: url(https://swiftbysundell.com/images/latest-black.svg);
+    background-image: url(/images/topic.svg);
     margin: 0px;
     font-weight: normal;
-    
+    color: var(--section-header-title-color-light);
 }
 
 /* section-header ending */
@@ -393,7 +587,11 @@ article p code, article li code, .discover .content code {
 
 .browse-all {
     display: block;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+}
+
+.tags-title{
+    color: var(--section-header-title-color-light);
 }
 
 .all-tags {
@@ -405,6 +603,7 @@ article p code, article li code, .discover .content code {
     font-size: 1em;
     margin-right: 10px;
     padding: 6px 10px;
+    margin-bottom: 10px;
 }
 
 footer {
@@ -412,13 +611,14 @@ footer {
     text-align:center;
     margin-top: 20px;
     margin-bottom: 30px;
-    border-top: 4px #ff8000 solid;
+    border-top: 1px var(--healthnote-green) solid;
     padding: 30px;
 }
 
 footer p{
     margin: 5px;
     font-size: 10px;
+    text-align: center;
 }
 
 hr {
@@ -440,8 +640,26 @@ article hr {
     width: 256px;
     border-style: solid;
     border-color: #9dafc9;
-    border-width: 0.8px;
+    border-width: 0.5px;
     border-radius: 10px;
+}
+
+/* about */
+.about img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.about h4{
+    font-weight: normal;
+}
+
+.about blockquote{
+    margin-bottom: 30px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -454,12 +672,37 @@ article hr {
         color: #ddd;
     }
 
+    .section-header h2{
+        color: var(--section-header-title-color-dark);
+    }
     .item-list>li {
-        background-color: #333;
+        background-color: var(--content-background-color-dark);
     }
 
-    header {
+    /* header {
         background-color: var(--header-background-color-dark);
+    } */
+
+    article p code{
+        /* color:black; */
+        background-color: gray;
+    }
+
+    .index-list li.indexli{
+        background-color: var(--content-background-color-dark);
+        /* box-shadow: 0 0 12px var(--shadow-color); */
+        /* -webkit-box-shadow: 0 0 12px var(--shadow-color);
+        -moz-box-shadow: 0 0 12px var(--shadow-color);
+        -ms-box-shadow: 0 0 12px var(--shadow-color);
+        -o-box-shadow: 0 0 12px var(--shadow-color); */
+    }
+
+    .index-item-more  {
+        color: var(--index-item-more-color-dark);
+    }
+
+    .tags-title{
+        color: var(--section-header-title-color-dark);
     }
 }
 
@@ -473,8 +716,8 @@ article hr {
 /* code */
 
 .content pre {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .content pre code {
@@ -484,7 +727,7 @@ article hr {
     border-radius: 8px;
     color: #a9bcbc;
     line-height: 1.4em;
-    font-size: 0.75em;
+    font-size: 0.9em;
     overflow-x: auto;
     white-space: pre;
     font-family: SF Mono,Consolas,Courier New,monospace,Helvetica, Arial;
@@ -701,15 +944,15 @@ article hr {
 }
 
 /* Tags Color */
-.variant-0 {
+.tag.variant-0 {
     background-color: #66293c !important;
 }
 
-.variant-1 {
+.tag.variant-1 {
     background-color: #913e37 !important;
 }
 
-.variant-2 {
+.tag.variant-2 {
     background-color: #ca7618 !important;
 }
 
@@ -744,4 +987,14 @@ article hr {
   --header-bottom-line-color-dark: ;
   --footer-top-line-color-light:;
   --footer-top-line-color-dark:;
+  --content-background-color-light:#eee;
+  --content-background-color-dark:#333;
+  --index-item-more-color-light: #8a8a8a;
+  --index-item-more-color-dark: #7a7a7a;
+  --item-title-color: #ff8000;
+  --item-title-hover-color: #ff3300;
+  --section-header-title-color-light:#333;
+  --section-header-title-color-dark:#bbb;
+  --shadow-color:#2a2a2a;
+  --healthnote-green:#01675D;
 }

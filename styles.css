@@ -24,6 +24,7 @@ body {
     font-feature-settings: "tnum";
     font-variant: tabular-nums;
     /* letter-spacing:2px; */
+
 }
 
 .wrapper {
@@ -46,8 +47,12 @@ div .publishDate {
 header {
     position: relative;
     /* background-color: var(--header-background-color-light); */
-/*    background-image: url('http://www.fatbobman.com/img/header_img/homesea.jpg');*/
-    background-attachment: scroll;
+    background-image: url('/images/blogBackground.svg');
+    background-position: right;
+    background-position-y: top;
+    background-repeat: no-repeat;
+    background-size: 400px;
+    /* background-attachment: scroll; */
 /*    background-size: cover;*/
     /* color: #fff; */
     line-height: 1.5em;
@@ -66,14 +71,17 @@ header a {
     text-decoration: none;
 }
 
-
+/*
 header .logo {
-    /* width: 500px; */
     max-width: 80%;
     margin-top: 50px;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+} */
+
+header h2{
+    margin-top: 80px;
 }
 
 
@@ -270,13 +278,23 @@ a.browse-all:hover {
     max-width : 90%
 }
 
+.content ul{
+    margin-top:10px;
+    margin-bottom:10px;
+    list-style: disc;
+}
+
 .content li
 {
     line-height: 1.6em;
+    
 }
 
 .content ol{
+    margin-top:10px;
+    margin-bottom:10px;
     line-height: 1.6em;
+    list-style: decimal;
 }
 
 .content ol li,.content ul li{
@@ -334,7 +352,9 @@ article p code, article li code, .discover .content code {
     padding: 0px;
 }
 
-
+.index-list blockquote p{
+    background-color: var(--index-list-blockquote-light);
+}
 
 
 .index-list ul.indexul{
@@ -613,12 +633,21 @@ footer {
     margin-bottom: 30px;
     border-top: 1px var(--healthnote-green) solid;
     padding: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 10px;
 }
 
 footer p{
     margin: 5px;
-    font-size: 10px;
     text-align: center;
+}
+
+
+footer li{
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 hr {
@@ -662,6 +691,57 @@ article hr {
     margin-bottom: 30px;
 }
 
+
+/* item-nav*/
+.item-navigator{
+    font-size: 13px;
+    /* white-space: nowrap; */
+    text-overflow: ellipsis;
+    height: 15px;
+    
+}
+
+.item-navigator a{
+    text-decoration: none;
+}
+
+.item-navigator table{
+    width: 100%;
+}
+
+.item-navigator td{
+    width: 50%;
+    text-overflow: ellipsis;
+    border:0px solid #0094ff;
+    height: 15px;
+}
+
+.item-navigator img{
+    width: 13px;
+}
+.item-navigator .previous-item{
+    /* float: left; */
+    text-overflow: ellipsis;
+    background-image: url("/images/leftarrow.svg");
+    background-repeat: no-repeat;
+    background-position-x: left;
+    background-size: 13px 13px;
+    padding-left: 18px;
+}
+
+.item-navigator .next-item{
+    /* float: right; */
+    /* display: block; */
+    text-overflow: ellipsis;
+    background-image: url("/images/rightarrow.svg");
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-size: 13px 13px;
+    padding-right: 18px;
+    text-align: right;
+}
+
+
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #222;
@@ -703,6 +783,10 @@ article hr {
 
     .tags-title{
         color: var(--section-header-title-color-dark);
+    }
+
+    .index-list blockquote p{
+        background-color: var(--index-list-blockquote-dark);
     }
 }
 
@@ -997,4 +1081,6 @@ article hr {
   --section-header-title-color-dark:#bbb;
   --shadow-color:#2a2a2a;
   --healthnote-green:#01675D;
+  --index-list-blockquote-dark:black;
+  --index-list-blockquote-light:white;
 }

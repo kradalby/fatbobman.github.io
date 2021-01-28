@@ -794,6 +794,12 @@ article hr {
     .wrapper {
         padding: 40px 20px;
     }
+
+    header nav li {
+        display: inline-block;
+        margin-left:3px;
+        margin-right:3px;
+    }
 }
 
 

@@ -714,6 +714,7 @@ article hr {
     text-overflow: ellipsis;
     border:0px solid #0094ff;
     height: 15px;
+    vertical-align: top;
 }
 
 .item-navigator img{
@@ -1075,8 +1076,6 @@ article hr {
   --footer-background-color-dark : #000;
   --header-bottom-line-color-light: ;
   --header-bottom-line-color-dark: ;
-  --footer-top-line-color-light:;
-  --footer-top-line-color-dark:;
   --content-background-color-light:#eee;
   --content-background-color-dark:#333;
   --index-item-more-color-light: #8a8a8a;

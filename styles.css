@@ -343,6 +343,7 @@ article h1{
 blockquote {
     margin-top: 10px ;
     margin-bottom: 10px;
+    background-color: #efefef;
 }
 
 .article p.info, blockquote p, .sponsorship .content > ul, .services .content > ul {
@@ -790,47 +791,7 @@ article hr {
 
 /*
 @media (prefers-color-scheme: dark) {
-    body {
-        background-color: #222;
-    }
-
-    body,
-    header .site-name {
-        color: #ddd;
-    }
-
-    header h2{
-        color: #ddd;
-    }
-
-    .section-header h2{
-        color: var(--section-header-title-color-dark);
-    }
-    .item-list>li {
-        background-color: var(--content-background-color-dark);
-    }
-
-
-    article p code{
-        background-color: black;
-    }
-
-    .index-list li.indexli{
-        background-color: var(--content-background-color-dark);
-    }
-
-    .index-item-more  {
-        color: var(--index-item-more-color-dark);
-    }
-
-    .tags-title{
-        color: var(--section-header-title-color-dark);
-    }
-
-
-    .index-list blockquote p{
-        background-color: var(--index-list-blockquote-dark);
-    }
+   
 } */
 
 @media(max-width: 600px) {
@@ -863,7 +824,7 @@ article hr {
     font-size: 12px;
     overflow-x: auto;
     white-space: pre;
-    font-family: SF Mono,Consolas,Courier New,monospace,Helvetica, Arial;
+    font-family: Menlo,Monaco,Consolas,Courier New,monospace,SF Mono,Consolas,Courier New,monospace,Helvetica, Arial;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -954,26 +915,8 @@ article hr {
     text-decoration: underline;
 }
 
-@media (prefers-color-scheme: dark) {
-    /*
+/* @media (prefers-color-scheme: dark) {
 
-     Atom One Dark by Daniel Gamage
-     Original One Dark Syntax theme from https://github.com/atom/one-dark-syntax
-
-     base:    #282c34
-     mono-1:  #abb2bf
-     mono-2:  #818896
-     mono-3:  #5c6370
-     hue-1:   #56b6c2
-     hue-2:   #61aeee
-     hue-3:   #c678dd
-     hue-4:   #98c379
-     hue-5:   #e06c75
-     hue-5-2: #be5046
-     hue-6:   #d19a66
-     hue-6-2: #e6c07b
-
-     */
 
     .hljs {
         display: block;
@@ -1074,7 +1017,7 @@ article hr {
     .article p code, .article li code, .discover .content code{
         background: #1a1a1a;
     }
-}
+} */
 
 /* Tags Color */
 .tag.variant-0 {

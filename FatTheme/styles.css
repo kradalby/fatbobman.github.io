@@ -1258,11 +1258,11 @@ article hr {
 .clearSearchInput {
     display: none; 
     position: absolute;
-    width: 16px;
-    height: 16px;
-    margin: 6px 0 0 -20px;  
+    width: 14px;
+    height: 14px;
+    margin: 9px 0 0 -20px;  
     background: url("/images/clear.svg") no-repeat;
-    background-size: 16px 16px;
+    background-size: 12px 12px;
     outline: none; 
 }
 
